@@ -1,0 +1,45 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+
+<Base
+  title="Articles & Insights — Vineet Rawat & Associates"
+  description="Articles and insights on taxation, audit, GST, accounting, and compliance from Vineet Rawat & Associates."
+  active="blog"
+>
+  <section class="page-banner">
+    <div class="container">
+      <h1>Articles &amp; Insights</h1>
+      <p>Regular updates and knowledge sharing on tax, audit, compliance, and accounting matters.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container prose">
+      {
+        posts.length === 0 && (
+          <p>No articles published yet. Check back soon.</p>
+        )
+      }
+      {posts.map((post) => (
+        <article class="post-item">
+          <div class="post-date">
+            <span class="day">{post.data.date.getDate()}</span>
+            <span class="mon">{post.data.date.toLocaleString('en-US', { month: 'short' })}</span>
+            <span class="yr">{post.data.date.getFullYear()}</span>
+          </div>
+          <div>
+            <h3><a href={`/blog/${post.slug}/`}>{post.data.title}</a></h3>
+            {post.data.description && <p class="excerpt">{post.data.description}</p>}
+            {post.data.category && <span class="cat">{post.data.category}</span>}
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</Base>

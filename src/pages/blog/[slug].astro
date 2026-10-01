@@ -1,0 +1,44 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const publishedDate = post.data.date.toLocaleDateString('en-GB', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<Base
+  title={`${post.data.title} — Vineet Rawat & Associates`}
+  description={post.data.description}
+  active="blog"
+>
+  <section class="page-banner">
+    <div class="container">
+      <h1>{post.data.title}</h1>
+      {post.data.description && <p>{post.data.description}</p>}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container prose">
+      <p class="post-meta">Published on {publishedDate}{post.data.category && <> &middot; Category: {post.data.category}</>}</p>
+
+      <Content />
+
+      <p><a href="/blog/">&larr; Back to Articles</a></p>
+    </div>
+  </section>
+</Base>
