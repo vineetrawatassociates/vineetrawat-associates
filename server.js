@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 const publicRoot = path.join(root, 'public');
+const articlesRoot = path.join(root, 'articles');
 const port = Number(process.env.PORT) || 3000;
 
 const pages = {
@@ -13,7 +14,6 @@ const pages = {
   '/services': 'pages/services.html',
   '/blog': 'pages/blog.html',
   '/contact': 'pages/contact.html',
-  '/blog/understanding-statutory-audit-india': 'articles/understanding-statutory-audit-india.html',
 };
 
 const types = {
@@ -41,6 +41,14 @@ function safePublicPath(urlPath) {
   const relative = decoded.replace(/^\/+/, '');
   const filePath = path.resolve(publicRoot, relative);
   if (filePath !== publicRoot && !filePath.startsWith(publicRoot + path.sep)) return null;
+  return filePath;
+}
+
+function articlePath(pathname) {
+  const match = pathname.match(/^\/blog\/([a-z0-9]+(?:-[a-z0-9]+)*)$/);
+  if (!match) return null;
+  const filePath = path.resolve(articlesRoot, `${match[1]}.html`);
+  if (!filePath.startsWith(articlesRoot + path.sep)) return null;
   return filePath;
 }
 
@@ -83,7 +91,7 @@ const server = http.createServer((req, res) => {
     pathname = pathname.slice(0, -1);
   }
 
-  let filePath = pages[pathname] ? path.join(root, pages[pathname]) : null;
+  let filePath = pages[pathname] ? path.join(root, pages[pathname]) : articlePath(pathname);
   const isPublicAsset =
     pathname.startsWith('/css/') ||
     pathname.startsWith('/js/') ||
