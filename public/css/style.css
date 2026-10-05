@@ -404,6 +404,26 @@ img {
   border-radius: 0 8px 8px 0;
 }
 
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 22px;
+  font-size: 0.95rem;
+  color: #2a3440;
+}
+
+.prose th, .prose td {
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  background: var(--bg-soft);
+  font-weight: 700;
+}
+
 .prose .post-meta {
   color: var(--muted);
   font-size: 0.9rem;
